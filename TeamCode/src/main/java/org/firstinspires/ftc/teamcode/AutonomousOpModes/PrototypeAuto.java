@@ -18,7 +18,7 @@ public class PrototypeAuto extends LinearOpMode {           // hard code for now
 
     private static final double COUNTS_PER_MOTOR_REV = 288;
     private static final double GEAR_RATIO = 1;
-    private static final double WHEEL_DIAMETER_INCHES = 4; // or 3 based on what we get
+    private static final double WHEEL_DIAMETER_INCHES = 3; // or 3 based on what we get
     private static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV) / (WHEEL_DIAMETER_INCHES * Math.PI * GEAR_RATIO);
 
     private ElapsedTime runtime = new ElapsedTime();

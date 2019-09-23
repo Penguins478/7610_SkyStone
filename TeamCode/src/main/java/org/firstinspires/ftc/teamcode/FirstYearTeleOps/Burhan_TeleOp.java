@@ -81,10 +81,25 @@ public class Burhan_TeleOp extends OpMode {
         angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
         angle = angles.firstAngle;
 
-        double[] rotated_xy = rotate(x, y, angle);
+        double r = Math.sqrt(x*x + y*y);
+        double theta;
 
-        x = rotated_xy[0];
-        y = rotated_xy[1];
+        if(angle != 0.0) {
+            if (x == 0) {
+                if (y < 0) {
+                    theta = -Math.PI / 2;
+                } else {
+                    theta = Math.PI / 2;
+                }
+            } else if (x < 0) {
+                theta = Math.atan(y / x) + Math.PI;
+            } else {
+                theta = Math.atan(y / x);
+            }
+            theta -= angle;
+            x = r * Math.cos(theta);
+            y = r * Math.sin(theta);
+        }
 
         tl_power = y - x + r;
         tr_power = y + x - r;
@@ -119,26 +134,6 @@ public class Burhan_TeleOp extends OpMode {
             power = prev_power - 0.01;
         }
         return power;
-    }
-
-    private double[] rotate(double x, double y, double angle) {
-        double r = Math.sqrt(x * x + y * y);
-        double theta;
-        if (x == 0) {
-            if (y < 0) {
-                theta = -Math.PI / 2;
-            } else {
-                theta = Math.PI / 2;
-            }
-        } else if (x < 0) {
-            theta = Math.atan(y / x) + Math.PI;
-        } else {
-            theta = Math.atan(y / x);
-        }
-        theta -= angle;
-        x = r * Math.cos(theta);
-        y = r * Math.sin(theta);
-        return new double[]{x, y};
     }
 
     @Override

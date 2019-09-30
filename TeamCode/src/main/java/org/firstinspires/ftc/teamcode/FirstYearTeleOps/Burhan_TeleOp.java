@@ -81,7 +81,7 @@ public class Burhan_TeleOp extends OpMode {
         angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
         angle = angles.firstAngle;
 
-        double scaler = Math.sqrt(x*x + y*y);
+        double scalar = Math.sqrt(x*x + y*y);
         double theta;
 
         if(angle != 0.0) {
@@ -97,8 +97,8 @@ public class Burhan_TeleOp extends OpMode {
                 theta = Math.atan(y / x);
             }
             theta -= angle;
-            x = scaler * Math.cos(theta);
-            y = scaler * Math.sin(theta);
+            x = scalar * Math.cos(theta);
+            y = scalar * Math.sin(theta);
         }
 
         tl_power = y - x + r;

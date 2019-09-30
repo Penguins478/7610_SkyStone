@@ -14,7 +14,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 @TeleOp(name = "Burhan_TeleOp", group = "Iterative OpMode")
 public class Burhan_TeleOp extends OpMode {
-    
+
     private DcMotor tl;
     private DcMotor tr;
     private DcMotor bl;
@@ -81,10 +81,10 @@ public class Burhan_TeleOp extends OpMode {
         angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
         angle = angles.firstAngle;
 
-        double r = Math.sqrt(x*x + y*y);
+        double rad = Math.hypot(x,y);
         double theta;
 
-        if(angle != 0.0) {
+        if (angle != 0.0) {
             if (x == 0) {
                 if (y < 0) {
                     theta = -Math.PI / 2;
@@ -97,8 +97,8 @@ public class Burhan_TeleOp extends OpMode {
                 theta = Math.atan(y / x);
             }
             theta -= angle;
-            x = r * Math.cos(theta);
-            y = r * Math.sin(theta);
+            x = rad * Math.cos(theta);
+            y = rad * Math.sin(theta);
         }
 
         tl_power = y - x + r;

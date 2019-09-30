@@ -14,7 +14,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 @TeleOp(name = "Burhan_TeleOp", group = "Iterative OpMode")
 public class Burhan_TeleOp extends OpMode {
-    
+
     private DcMotor tl;
     private DcMotor tr;
     private DcMotor bl;

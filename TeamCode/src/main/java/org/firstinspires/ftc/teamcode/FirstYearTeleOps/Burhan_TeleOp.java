@@ -14,7 +14,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 @TeleOp(name = "Burhan_TeleOp", group = "Iterative OpMode")
 public class Burhan_TeleOp extends OpMode {
-
+    // declares all of the variables, like motors, and power
     private DcMotor tl;
     private DcMotor tr;
     private DcMotor bl;
@@ -37,6 +37,8 @@ public class Burhan_TeleOp extends OpMode {
 
     @Override
     public void init() {
+        // initializes the motors, their directions and power, and the mode they are in
+        // it also sets the powers
         tl = hardwareMap.dcMotor.get("tl");
         tr = hardwareMap.dcMotor.get("tr");
         bl = hardwareMap.dcMotor.get("bl");
@@ -70,11 +72,12 @@ public class Burhan_TeleOp extends OpMode {
 
     @Override
     public void init_loop() {
-
+    //nothing happens
     }
 
     @Override
     public void loop() {
+        // sets variables for controller stick
         x = -gamepad1.left_stick_x;
         y = gamepad1.left_stick_y;
         r = -gamepad1.right_stick_x;

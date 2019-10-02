@@ -128,13 +128,18 @@ public class Burhan_TeleOp extends OpMode {
         tr_prev_power = tr_power;
         bl_prev_power = bl_power;
         br_prev_power = br_power;
+
+        telemetry.addData("tl motor speed", tl_power);
+        telemetry.addData("tr motor speed", tr_power);
+        telemetry.addData("bl motor speed", bl_power);
+        telemetry.addData("br motor speed", br_power);
+
+        telemetry.addData("angle", angle);
     }
 
     private double slow_accelerate(double power, double prev_power) {
-        if (power > prev_power + 0.0001) {
-            power = prev_power + 0.0001;
-        } else if (power < prev_power - 0.01) {
-            power = prev_power - 0.01;
+        if (power > prev_power + 0.01 || power < prev_power - 0.01) {
+            power += (power - prev_power)/10;
         }
         return power;
     }

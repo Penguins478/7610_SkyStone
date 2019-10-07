@@ -34,6 +34,7 @@ public class Burhan_TeleOp extends OpMode {
     private double y;
     private double r;
     private double angle;
+    private double k;
 
     @Override
     public void init() {
@@ -68,6 +69,8 @@ public class Burhan_TeleOp extends OpMode {
         parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
         imu.initialize(parameters);
+
+        k = 45;
     }
 
     @Override

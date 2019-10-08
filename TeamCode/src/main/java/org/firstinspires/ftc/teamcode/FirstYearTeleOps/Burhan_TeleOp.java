@@ -35,6 +35,13 @@ public class Burhan_TeleOp extends OpMode {
     private double r;
     private double angle;
     private double k;
+    private boolean dpadmode;
+    private boolean up;
+    private boolean down;
+    private boolean left;
+    private boolean right;
+    private boolean changemode;
+    private double targetangle;
 
     @Override
     public void init() {
@@ -71,41 +78,76 @@ public class Burhan_TeleOp extends OpMode {
         imu.initialize(parameters);
 
         k = 45;
+        dpadmode = false;
     }
 
     @Override
     public void init_loop() {
-    //nothing happens
+        //nothing happens
     }
 
     @Override
     public void loop() {
         // sets variables for controller stick
-        x = -gamepad1.left_stick_x;
-        y = gamepad1.left_stick_y;
-        r = -gamepad1.right_stick_x;
         angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
         angle = angles.firstAngle;
+        up = gamepad1.dpad_up;
+        down = gamepad1.dpad_down;
+        left = gamepad1.dpad_left;
+        right = gamepad1.dpad_right;
+        changemode = gamepad1.right_bumper;
 
-        double scalar = Math.sqrt(x*x + y*y);
-        double theta;
-
-        if(angle != 0.0) {
-            if (x == 0) {
-                if (y < 0) {
-                    theta = -Math.PI / 2;
-                } else {
-                    theta = Math.PI / 2;
-                }
-            } else if (x < 0) {
-                theta = Math.atan(y / x) + Math.PI;
-            } else {
-                theta = Math.atan(y / x);
-            }
-            theta -= angle;
-            x = scalar * Math.cos(theta);
-            y = scalar * Math.sin(theta);
+        if (changemode) {
+            dpadmode = !dpadmode;
+            targetangle = angle;
         }
+
+        if (dpadmode) {
+            x = 0;
+            y = 0;
+
+            if (up) {
+                y += 1;
+            }
+            if (down) {
+                y -= 1;
+            }
+            if (left) {
+                x -= 1;
+            }
+            if (right) {
+                x += 1;
+            }
+
+            if (angle != targetangle) {
+                r = (targetangle - angle) / k;
+            }
+        } else {
+            x = -gamepad1.left_stick_x;
+            y = gamepad1.left_stick_y;
+            r = -gamepad1.right_stick_x;
+
+            double scalar = Math.hypot(x, y);
+            double theta;
+
+            if (angle != 0.0) {
+                if (x == 0) {
+                    if (y < 0) {
+                        theta = -Math.PI / 2;
+                    } else {
+                        theta = Math.PI / 2;
+                    }
+                } else if (x < 0) {
+                    theta = Math.atan(y / x) + Math.PI;
+                } else {
+                    theta = Math.atan(y / x);
+                }
+                theta -= angle;
+                x = scalar * Math.cos(theta);
+                y = scalar * Math.sin(theta);
+            }
+        }
+
 
         tl_power = y - x + r;
         tr_power = y + x - r;
@@ -142,7 +184,7 @@ public class Burhan_TeleOp extends OpMode {
 
     private double slow_accelerate(double power, double prev_power) {
         if (power > prev_power + 0.01 || power < prev_power - 0.01) {
-            power += (power - prev_power)/10;
+            power += (power - prev_power) / 10;
         }
         return power;
     }

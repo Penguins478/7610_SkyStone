@@ -34,14 +34,16 @@ public class Burhan_TeleOp extends OpMode {
     private double y;
     private double r;
     private double angle;
-    private double k;
-    private boolean dpadmode;
+    private final double k = 45;
+    private boolean dpad_mode;
     private boolean up;
     private boolean down;
     private boolean left;
     private boolean right;
-    private boolean changemode;
-    private double targetangle;
+    private boolean change_mode;
+    private double target_angle;
+    private boolean accelerate;
+    private boolean change_acceleration_mode;
 
     @Override
     public void init() {
@@ -77,8 +79,8 @@ public class Burhan_TeleOp extends OpMode {
         parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
         imu.initialize(parameters);
 
-        k = 45;
-        dpadmode = false;
+        dpad_mode = false;
+        accelerate = true;
     }
 
     @Override
@@ -95,32 +97,34 @@ public class Burhan_TeleOp extends OpMode {
         down = gamepad1.dpad_down;
         left = gamepad1.dpad_left;
         right = gamepad1.dpad_right;
-        changemode = gamepad1.right_bumper;
+        change_mode = gamepad1.right_bumper;
+        change_acceleration_mode = gamepad1.left_bumper;
 
-        if (changemode) {
-            dpadmode = !dpadmode;
-            targetangle = angle;
+        if (change_mode) {
+            dpad_mode = !dpad_mode;
+            target_angle = angle;
         }
 
-        if (dpadmode) {
-            x = 0;
-            y = 0;
+        if (change_acceleration_mode) {
+            accelerate = !accelerate;
+        }
 
+        if (dpad_mode) {
             if (up) {
-                y += 1;
+                y = 1;
             }
             if (down) {
-                y -= 1;
+                y = -1;
             }
             if (left) {
-                x -= 1;
+                x = -1;
             }
             if (right) {
-                x += 1;
+                x = 1;
             }
 
-            if (angle != targetangle) {
-                r = (targetangle - angle) / k;
+            if (angle != target_angle) {
+                r = (target_angle - angle) / k;
             }
         } else {
             x = -gamepad1.left_stick_x;
@@ -159,10 +163,12 @@ public class Burhan_TeleOp extends OpMode {
         bl_power = Range.clip(bl_power, -1, 1);
         br_power = Range.clip(br_power, -1, 1);
 
-        tl_power = slow_accelerate(tl_power, tl_prev_power);
-        tr_power = slow_accelerate(tr_power, tr_prev_power);
-        bl_power = slow_accelerate(bl_power, bl_prev_power);
-        br_power = slow_accelerate(br_power, br_prev_power);
+        if (accelerate) {
+            tl_power = slow_accelerate(tl_power, tl_prev_power);
+            tr_power = slow_accelerate(tr_power, tr_prev_power);
+            bl_power = slow_accelerate(bl_power, bl_prev_power);
+            br_power = slow_accelerate(br_power, br_prev_power);
+        }
 
         tl.setPower(tl_power);
         tr.setPower(tr_power);
@@ -180,6 +186,9 @@ public class Burhan_TeleOp extends OpMode {
         telemetry.addData("br motor speed", br_power);
 
         telemetry.addData("angle", angle);
+
+        telemetry.addData("dpad_mode", dpad_mode);
+        telemetry.addData("acceleration", accelerate);
     }
 
     private double slow_accelerate(double power, double prev_power) {

@@ -51,10 +51,10 @@ public class Burhan_TeleOp extends OpMode {
     public void init() {
         // initializes the motors, their directions and power, and the mode they are in
         // it also sets the powers
-        tl = hardwareMap.dcMotor.get("tl");
-        tr = hardwareMap.dcMotor.get("tr");
-        bl = hardwareMap.dcMotor.get("bl");
-        br = hardwareMap.dcMotor.get("br");
+        tl = hardwareMap.dcMotor.get("tl_motor");
+        tr = hardwareMap.dcMotor.get("tr_motor");
+        bl = hardwareMap.dcMotor.get("bl_motor");
+        br = hardwareMap.dcMotor.get("br_motor");
         imu = hardwareMap.get(BNO055IMU.class, "imu");
 
         tl.setDirection(DcMotorSimple.Direction.FORWARD);

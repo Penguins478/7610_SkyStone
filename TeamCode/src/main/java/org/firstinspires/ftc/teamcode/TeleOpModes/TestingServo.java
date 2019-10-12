@@ -12,7 +12,7 @@ public class TestingServo extends OpMode {
     @Override
     public void init() {
         servol = hardwareMap.servo.get("servol");
-        servor = hardwareMap.servo.get("servor");
+        //servor = hardwareMap.servo.get("servor");
     }
 
     @Override
@@ -25,10 +25,10 @@ public class TestingServo extends OpMode {
         boolean pressed = gamepad1.right_bumper;
         if (pressed) {
             servol.setPosition(0.5);
-            servor.setPosition(0.5);
+            //servor.setPosition(0.5);
         } else {
             servol.setPosition(0.0);
-            servor.setPosition(0.0);
+            //servor.setPosition(0.0);
         }
     }
 

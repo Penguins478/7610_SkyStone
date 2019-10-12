@@ -129,7 +129,7 @@ public class Burhan_TeleOp extends OpMode {
                 r = (target_angle - angle) / k;
             }
         } else {
-            x = -gamepad1.left_stick_x;
+            x = gamepad1.left_stick_x;
             y = gamepad1.left_stick_y;
             r = -gamepad1.right_stick_x;
 
@@ -191,6 +191,7 @@ public class Burhan_TeleOp extends OpMode {
 
         telemetry.addData("dpad_mode", dpad_mode);
         telemetry.addData("acceleration", accelerate);
+        telemetry.update();
     }
 
     private double slow_accelerate(double power, double prev_power) {

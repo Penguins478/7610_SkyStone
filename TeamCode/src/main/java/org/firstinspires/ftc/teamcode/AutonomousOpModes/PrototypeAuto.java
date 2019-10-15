@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.AutonomousOpModes;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -7,7 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@TeleOp(name = "PrototypeAuto", group = "Autonomous")
+@Autonomous(name = "PrototypeAuto", group = "Autonomous") //broken
 //@Disabled
 public class PrototypeAuto extends LinearOpMode {           // hard code for now cuz we arent doing anything
     // and roadrunner + odometry will take awhile
@@ -50,10 +51,7 @@ public class PrototypeAuto extends LinearOpMode {           // hard code for now
         bl_motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         br_motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        tl_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        tr_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        bl_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        br_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        waitForStart();
 
         while(opModeIsActive()) {   // go implement straight drive
 
@@ -62,6 +60,11 @@ public class PrototypeAuto extends LinearOpMode {           // hard code for now
             tr_motor.setTargetPosition((int) (tr_motor.getCurrentPosition() + (47 - 5) * COUNTS_PER_INCH));
             bl_motor.setTargetPosition((int) (bl_motor.getCurrentPosition() + (47 - 5) * COUNTS_PER_INCH));
             br_motor.setTargetPosition((int) (br_motor.getCurrentPosition() + (47 - 5) * COUNTS_PER_INCH));
+
+            tl_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            tr_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            bl_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            br_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             // can lower speed if needed
             tl_motor.setPower(1);

@@ -5,14 +5,14 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp(name = "servo", group = "teleop modes")
-public class TestingServo extends OpMode {
+public class FoundationServo extends OpMode {
     private Servo servol;
     private Servo servor;
 
     @Override
     public void init() {
         servol = hardwareMap.servo.get("servol");
-        //servor = hardwareMap.servo.get("servor");
+        servor = hardwareMap.servo.get("servor");
     }
 
     @Override
@@ -25,10 +25,10 @@ public class TestingServo extends OpMode {
         boolean pressed = gamepad1.right_bumper;
         if (pressed) {
             servol.setPosition(0.5);
-            //servor.setPosition(0.5);
+            servor.setPosition(0.5);
         } else {
             servol.setPosition(0.0);
-            //servor.setPosition(0.0);
+            servor.setPosition(0.0);
         }
     }
 

@@ -112,22 +112,28 @@ public class Burhan_TeleOp extends OpMode {
         }
 
         if (dpad_mode) {
-            if (up) {
-                y = 1;
-            }
-            if (down) {
-                y = -1;
-            }
-            if (left) {
-                x = -1;
-            }
-            if (right) {
-                x = 1;
-            }
-
             if (angle != target_angle) {
                 r = (target_angle - angle) / k;
             }
+            if (up) {
+                y = 1;
+                x = 0;
+            }else if (down) {
+                y = -1;
+                x = 0;
+            }else if (left) {
+                x = -1;
+                y = 0;
+            }else if (right) {
+                x = 1;
+                y = 0;
+            }else{
+                x = 0;
+                y = 0;
+                r = 0;
+            }
+
+
         } else {
             x = gamepad1.left_stick_x;
             y = gamepad1.left_stick_y;

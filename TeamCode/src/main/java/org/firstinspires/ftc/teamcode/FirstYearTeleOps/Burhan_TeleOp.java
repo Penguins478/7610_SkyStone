@@ -57,10 +57,10 @@ public class Burhan_TeleOp extends OpMode {
         br = hardwareMap.dcMotor.get("br_motor");
         imu = hardwareMap.get(BNO055IMU.class, "imu");
 
-        tl.setDirection(DcMotorSimple.Direction.FORWARD);
-        bl.setDirection(DcMotorSimple.Direction.FORWARD);
-        tr.setDirection(DcMotorSimple.Direction.REVERSE);
-        br.setDirection(DcMotorSimple.Direction.REVERSE);
+        tl.setDirection(DcMotorSimple.Direction.REVERSE);
+        bl.setDirection(DcMotorSimple.Direction.REVERSE);
+        tr.setDirection(DcMotorSimple.Direction.FORWARD);
+        br.setDirection(DcMotorSimple.Direction.FORWARD);
 
         tl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         bl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -130,7 +130,6 @@ public class Burhan_TeleOp extends OpMode {
             }else{
                 x = 0;
                 y = 0;
-                r = 0;
             }
 
 
@@ -155,8 +154,8 @@ public class Burhan_TeleOp extends OpMode {
                     theta = Math.atan(y / x);
                 }
                 theta -= angle;
-                x = scalar * Math.cos(theta);
-                y = scalar * Math.sin(theta);
+                x = scalar * Math.sin(theta);
+                y = scalar * Math.cos(theta);
             }
         }
 
@@ -202,7 +201,7 @@ public class Burhan_TeleOp extends OpMode {
 
     private double slow_accelerate(double power, double prev_power) {
         if (power > prev_power + 0.01 || power < prev_power - 0.01) {
-            power += (power - prev_power) / 10;
+            power = prev_power + (power - prev_power) / 10;
         }
         return power;
     }

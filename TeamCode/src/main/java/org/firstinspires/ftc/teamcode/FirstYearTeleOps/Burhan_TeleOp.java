@@ -134,7 +134,7 @@ public class Burhan_TeleOp extends OpMode {
 
 
         } else {
-            x = gamepad1.left_stick_x;
+            x = -gamepad1.left_stick_x;
             y = gamepad1.left_stick_y;
             r = -gamepad1.right_stick_x;
 
@@ -154,16 +154,16 @@ public class Burhan_TeleOp extends OpMode {
                     theta = Math.atan(y / x);
                 }
                 theta -= angle;
-                x = scalar * Math.sin(theta);
-                y = scalar * Math.cos(theta);
+                x = scalar * Math.cos(theta);
+                y = scalar * Math.sin(theta);
             }
         }
 
 
-        tl_power = y - x + r;
-        tr_power = y + x - r;
-        bl_power = y + x + r;
-        br_power = y - x - r;
+        tl_power = y + x + r;
+        tr_power = y - x - r;
+        bl_power = y - x + r;
+        br_power = y + x - r;
 
         tl_power = Range.clip(tl_power, -1, 1);
         tr_power = Range.clip(tr_power, -1, 1);
@@ -201,7 +201,7 @@ public class Burhan_TeleOp extends OpMode {
 
     private double slow_accelerate(double power, double prev_power) {
         if (power > prev_power + 0.01 || power < prev_power - 0.01) {
-            power = prev_power + (power - prev_power) / 10;
+            power = prev_power + (power - prev_power) / 5;
         }
         return power;
     }

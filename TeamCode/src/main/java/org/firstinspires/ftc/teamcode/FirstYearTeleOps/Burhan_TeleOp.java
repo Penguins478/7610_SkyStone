@@ -57,10 +57,8 @@ public class Burhan_TeleOp extends OpMode {
         br = hardwareMap.dcMotor.get("br_motor");
         imu = hardwareMap.get(BNO055IMU.class, "imu");
 
-        tl.setDirection(DcMotorSimple.Direction.REVERSE);
-        bl.setDirection(DcMotorSimple.Direction.REVERSE);
-        tr.setDirection(DcMotorSimple.Direction.FORWARD);
-        br.setDirection(DcMotorSimple.Direction.FORWARD);
+        tr.setDirection(DcMotorSimple.Direction.REVERSE);
+        br.setDirection(DcMotorSimple.Direction.REVERSE);
 
         tl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         bl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -144,26 +142,26 @@ public class Burhan_TeleOp extends OpMode {
             if (angle != 0.0) {
                 if (x == 0) {
                     if (y < 0) {
-                        theta = -Math.PI / 2;
+                        theta = Math.PI;
                     } else {
-                        theta = Math.PI / 2;
+                        theta = 0;
                     }
                 } else if (x < 0) {
-                    theta = Math.atan(y / x) + Math.PI;
+                    theta = Math.atan(y / x) + Math.PI / 2;
                 } else {
-                    theta = Math.atan(y / x);
+                    theta = Math.atan(y / x) - Math.PI / 2;
                 }
                 theta -= angle;
+                theta += Math.PI;
                 x = scalar * Math.cos(theta);
                 y = scalar * Math.sin(theta);
             }
         }
 
-
-        tl_power = y + x + r;
-        tr_power = y - x - r;
-        bl_power = y - x + r;
-        br_power = y + x - r;
+        tl_power = y - x + r;
+        tr_power = y + x - r;
+        bl_power = y + x + r;
+        br_power = y - x - r;
 
         tl_power = Range.clip(tl_power, -1, 1);
         tr_power = Range.clip(tr_power, -1, 1);

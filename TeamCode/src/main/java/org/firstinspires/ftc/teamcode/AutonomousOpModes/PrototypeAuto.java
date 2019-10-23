@@ -19,7 +19,7 @@ public class PrototypeAuto extends LinearOpMode {           // hard code for now
 
     private static final double COUNTS_PER_MOTOR_REV = 288;
     private static final double GEAR_RATIO = 2;
-    private static final double WHEEL_DIAMETER_INCHES = 3; // or 3 based on what we get
+    private static final double WHEEL_DIAMETER_INCHES = 2.9527559055; // or 3 based on what we get
     private static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV) / (WHEEL_DIAMETER_INCHES * Math.PI * GEAR_RATIO);
 
     private ElapsedTime runtime = new ElapsedTime();
@@ -31,10 +31,10 @@ public class PrototypeAuto extends LinearOpMode {           // hard code for now
         bl_motor = hardwareMap.dcMotor.get("bl_motor");
         br_motor = hardwareMap.dcMotor.get("br_motor");
 
-        tl_motor.setDirection(DcMotorSimple.Direction.FORWARD);
-        bl_motor.setDirection(DcMotorSimple.Direction.FORWARD);
-        tr_motor.setDirection(DcMotorSimple.Direction.REVERSE);
-        br_motor.setDirection(DcMotorSimple.Direction.REVERSE);
+        tl_motor.setDirection(DcMotorSimple.Direction.REVERSE);
+        bl_motor.setDirection(DcMotorSimple.Direction.REVERSE);
+        tr_motor.setDirection(DcMotorSimple.Direction.FORWARD);
+        br_motor.setDirection(DcMotorSimple.Direction.FORWARD);
 
         tl_motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         bl_motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -55,58 +55,8 @@ public class PrototypeAuto extends LinearOpMode {           // hard code for now
 
         while(opModeIsActive()) {   // go implement straight drive
 
-            // go up to the stones
-            tl_motor.setTargetPosition((int) (tl_motor.getCurrentPosition() + (47 - 5) * COUNTS_PER_INCH));
-            tr_motor.setTargetPosition((int) (tr_motor.getCurrentPosition() + (47 - 5) * COUNTS_PER_INCH));
-            bl_motor.setTargetPosition((int) (bl_motor.getCurrentPosition() + (47 - 5) * COUNTS_PER_INCH));
-            br_motor.setTargetPosition((int) (br_motor.getCurrentPosition() + (47 - 5) * COUNTS_PER_INCH));
+            encoderDrive(10 * COUNTS_PER_INCH, 10 * COUNTS_PER_INCH, 10 * COUNTS_PER_INCH, 10 * COUNTS_PER_INCH, 0.3, 25, 100);
 
-            tl_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            tr_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            bl_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            br_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-            // can lower speed if needed
-            tl_motor.setPower(1);
-            tr_motor.setPower(1);
-            bl_motor.setPower(1);
-            br_motor.setPower(1);
-
-
-            // get near the wall to have vision on all stones
-            tl_motor.setTargetPosition((int) (tl_motor.getCurrentPosition() + (24 - 4) * COUNTS_PER_INCH));
-            tr_motor.setTargetPosition((int) (tr_motor.getCurrentPosition() - (24 - 4) * COUNTS_PER_INCH));
-            bl_motor.setTargetPosition((int) (bl_motor.getCurrentPosition() - (24 - 4) * COUNTS_PER_INCH));
-            br_motor.setTargetPosition((int) (br_motor.getCurrentPosition() + (24 - 4) * COUNTS_PER_INCH));
-
-            // can lower speed if needed
-            tl_motor.setPower(1);
-            tr_motor.setPower(1);
-            bl_motor.setPower(1);
-            br_motor.setPower(1);
-
-            tl_motor.setTargetPosition((int) (tl_motor.getCurrentPosition() - (48 - 0) * COUNTS_PER_INCH));
-            tr_motor.setTargetPosition((int) (tr_motor.getCurrentPosition() + (48 - 0) * COUNTS_PER_INCH));
-            bl_motor.setTargetPosition((int) (bl_motor.getCurrentPosition() + (48 - 0) * COUNTS_PER_INCH));
-            br_motor.setTargetPosition((int) (br_motor.getCurrentPosition() - (48 - 0) * COUNTS_PER_INCH));
-
-            // can lower speed if needed
-            tl_motor.setPower(1);
-            tr_motor.setPower(1);
-            bl_motor.setPower(1);
-            br_motor.setPower(1);
-
-            // diagonal towards the wall
-            //tl_motor.setTargetPosition(0);
-            tr_motor.setTargetPosition((int) (tr_motor.getCurrentPosition() + (48 - 0) * COUNTS_PER_INCH));
-            //bl_motor.setTargetPosition(0);
-            br_motor.setTargetPosition((int) (br_motor.getCurrentPosition() - (48 - 0) * COUNTS_PER_INCH));
-
-            // can lower speed if needed
-            tl_motor.setPower(0);
-            tr_motor.setPower(1);
-            bl_motor.setPower(0);
-            br_motor.setPower(1);
 
             telemetry.addData("Encoder tl", tl_motor.getCurrentPosition());
             telemetry.addData("Encoder tr", tr_motor.getCurrentPosition());
@@ -115,5 +65,59 @@ public class PrototypeAuto extends LinearOpMode {           // hard code for now
             telemetry.update();
         }
     }
+
+    public void encoderDrive(double distance1, double distance2, double distance3, double distance4, double power, double error, long timeout){
+        //if grater, -power
+        // if less ,power
+        // inside margin ,0
+        double start_tl = tl_motor.getCurrentPosition();
+        double start_tr = tr_motor.getCurrentPosition();
+        double start_bl = bl_motor.getCurrentPosition();
+        double start_br = br_motor.getCurrentPosition();
+
+        while(Math.abs(tl_motor.getCurrentPosition() - (tl_motor.getCurrentPosition() + distance1)) > 10
+                || Math.abs(tr_motor.getCurrentPosition() - (tr_motor.getCurrentPosition() + distance2)) > 10
+                || Math.abs(bl_motor.getCurrentPosition() - (bl_motor.getCurrentPosition() + distance3)) > 10
+                || Math.abs(br_motor.getCurrentPosition() - (br_motor.getCurrentPosition() + distance4)) > 10){
+            if(tl_motor.getCurrentPosition() + error < start_tl + distance1){
+                tl_motor.setPower(power);
+            }else if(tl_motor.getCurrentPosition() > start_tl + distance1 + error){
+                tl_motor.setPower(power * 0.5);
+            }else{
+                tl_motor.setPower(0);
+            }
+            if(tr_motor.getCurrentPosition() + error < start_tr + distance2){
+                tr_motor.setPower(power);
+            }else if(tr_motor.getCurrentPosition() > start_tr + distance2 + error){
+                tr_motor.setPower(power * 0.5);
+            }else{
+                tr_motor.setPower(0);
+            }
+            if(bl_motor.getCurrentPosition() + error < start_bl + distance3){
+                bl_motor.setPower(power);
+            }else if(bl_motor.getCurrentPosition() > start_bl + distance3 + error){
+                bl_motor.setPower(power * 0.5);
+            }else{
+                bl_motor.setPower(0);
+            }
+            if(br_motor.getCurrentPosition() + error < start_br + distance4){
+                tl_motor.setPower(power);
+            }else if(br_motor.getCurrentPosition() > start_br + distance4 + error){
+                br_motor.setPower(power * 0.5);
+            }else{
+                br_motor.setPower(0);
+            }
+            telemetry.addData("Encoder tl", tl_motor.getCurrentPosition());
+            telemetry.addData("Encoder tr", tr_motor.getCurrentPosition());
+            telemetry.addData("Encoder bl", bl_motor.getCurrentPosition());
+            telemetry.addData("Encoder br", br_motor.getCurrentPosition());
+            telemetry.update();
+        }
+
+        sleep(timeout);
+
+    }
+
 }
+
 

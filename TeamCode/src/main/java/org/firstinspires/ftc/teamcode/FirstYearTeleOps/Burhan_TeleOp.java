@@ -140,19 +140,8 @@ public class Burhan_TeleOp extends OpMode {
             double theta;
 
             if (angle != 0.0) {
-                if (x == 0) {
-                    if (y < 0) {
-                        theta = Math.PI;
-                    } else {
-                        theta = 0;
-                    }
-                } else if (x < 0) {
-                    theta = Math.atan(y / x) + Math.PI / 2;
-                } else {
-                    theta = Math.atan(y / x) - Math.PI / 2;
-                }
+                theta = Math.atan2(y, x);
                 theta -= angle;
-                theta += Math.PI;
                 x = scalar * Math.cos(theta);
                 y = scalar * Math.sin(theta);
             }
@@ -194,6 +183,10 @@ public class Burhan_TeleOp extends OpMode {
 
         telemetry.addData("dpad_mode", dpad_mode);
         telemetry.addData("acceleration", accelerate);
+
+        telemetry.addData("x", x);
+        telemetry.addData("y", y);
+
         telemetry.update();
     }
 

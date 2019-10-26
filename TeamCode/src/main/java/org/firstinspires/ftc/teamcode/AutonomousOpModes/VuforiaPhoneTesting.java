@@ -72,7 +72,7 @@ public class VuforiaPhoneTesting extends LinearOpMode {
     private static final float quadField  = 36 * mmPerInch;
 
     // Class Members
-    private OpenGLMatrix lastLocation = null;
+    OpenGLMatrix lastLocation = null;
     private VuforiaLocalizer vuforia = null;
     private boolean targetVisible = false;
     private float phoneXRotate    = 0;

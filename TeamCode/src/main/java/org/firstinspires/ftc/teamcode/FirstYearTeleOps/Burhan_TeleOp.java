@@ -17,10 +17,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 //@Disabled
 public class Burhan_TeleOp extends OpMode {
     // declares all of the variables, like motors, and power
-    private DcMotor tl;
-    private DcMotor tr;
-    private DcMotor bl;
-    private DcMotor br;
+    private DcMotor tl_motor;
+    private DcMotor tr_motor;
+    private DcMotor bl_motor;
+    private DcMotor br_motor;
     private BNO055IMU imu;
     private BNO055IMU.Parameters parameters;
     private Orientation angles;
@@ -51,24 +51,24 @@ public class Burhan_TeleOp extends OpMode {
     public void init() {
         // initializes the motors, their directions and power, and the mode they are in
         // it also sets the powers
-        tl = hardwareMap.dcMotor.get("tl_motor");
-        tr = hardwareMap.dcMotor.get("tr_motor");
-        bl = hardwareMap.dcMotor.get("bl_motor");
-        br = hardwareMap.dcMotor.get("br_motor");
+        tl_motor = hardwareMap.dcMotor.get("tl_motor");
+        tr_motor = hardwareMap.dcMotor.get("tr_motor");
+        bl_motor = hardwareMap.dcMotor.get("bl_motor");
+        br_motor = hardwareMap.dcMotor.get("br_motor");
         imu = hardwareMap.get(BNO055IMU.class, "imu");
 
-        tr.setDirection(DcMotorSimple.Direction.REVERSE);
-        br.setDirection(DcMotorSimple.Direction.REVERSE);
+        tr_motor.setDirection(DcMotorSimple.Direction.REVERSE);
+        br_motor.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        tl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        bl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        tr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        br.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        tl_motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        bl_motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        tr_motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        br_motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        tl.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        tr.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        bl.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        br.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        tl_motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        tr_motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        bl_motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        br_motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         tl_prev_power = 0;
         tr_prev_power = 0;
@@ -132,9 +132,9 @@ public class Burhan_TeleOp extends OpMode {
 
 
         } else {
-            x = -gamepad1.left_stick_x;
-            y = gamepad1.left_stick_y;
-            r = -gamepad1.right_stick_x;
+            x = gamepad1.left_stick_x;
+            y = -gamepad1.left_stick_y;
+            r = gamepad1.right_stick_x;
 
             double scalar = Math.hypot(x, y);
             double theta;
@@ -164,10 +164,10 @@ public class Burhan_TeleOp extends OpMode {
             br_power = slow_accelerate(br_power, br_prev_power);
         }
 
-        tl.setPower(tl_power);
-        tr.setPower(tr_power);
-        bl.setPower(bl_power);
-        br.setPower(br_power);
+        tl_motor.setPower(tl_power);
+        tr_motor.setPower(tr_power);
+        bl_motor.setPower(bl_power);
+        br_motor.setPower(br_power);
 
         tl_prev_power = tl_power;
         tr_prev_power = tr_power;

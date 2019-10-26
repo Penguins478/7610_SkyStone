@@ -102,17 +102,17 @@ public class PrototypeAuto extends LinearOpMode {           // hard code for now
 
         waitForStart();
 
-        while(opModeIsActive()) {   // go implement straight drive
+        //while(opModeIsActive()) {   // go implement straight drive
             encoderDrive(0.65, 24, 1000, 20);
             stop();
             //sleep(10000);
-        }
+        //}
 
 
     }
 
     public void encoderDrive(double power, double distance, double timeOuts, double error){
-        double target = tl_motor.getCurrentPosition() + distance*COUNTS_PER_INCH*2;
+        double target = tl_motor.getCurrentPosition() + distance*COUNTS_PER_INCH*4;
         boolean checktl=true;
         boolean checktr=true;
         boolean checkbl=true;
@@ -123,19 +123,8 @@ public class PrototypeAuto extends LinearOpMode {           // hard code for now
                 br_motor.getCurrentPosition()<=target&&Math.abs(target-br_motor.getCurrentPosition())>=error &&
                 checkbl&&checkbr&&checktl&&checktr){
 
-            telemetry.addData("lmao", "bruh");
-
-            encoderDrive(10 * COUNTS_PER_INCH, 10 * COUNTS_PER_INCH, 10 * COUNTS_PER_INCH, 10 * COUNTS_PER_INCH, 0.3, 25, 100);
-
-
-            telemetry.addData("Encoder tl", tl_motor.getCurrentPosition());
-            telemetry.addData("Encoder tr", tr_motor.getCurrentPosition());
-            telemetry.addData("Encoder bl", bl_motor.getCurrentPosition());
-            telemetry.addData("Encoder br", br_motor.getCurrentPosition());
-            telemetry.update();
-
             if(checktl&&tl_motor.getCurrentPosition()<=target&&Math.abs(target-tl_motor.getCurrentPosition())>=error){
-                tl_motor.setPower(power*((target-tl_motor.getCurrentPosition())/target));
+                tl_motor.setPower(-power*((target-tl_motor.getCurrentPosition())/target));
             }else if(checktl&&tl_motor.getCurrentPosition()<=target&&Math.abs(target-tl_motor.getCurrentPosition())<=error){
                 checktl=false;
                 tl_motor.setPower(0);
@@ -153,7 +142,7 @@ public class PrototypeAuto extends LinearOpMode {           // hard code for now
                 bl_motor.setPower(0);
             }
             if(checkbr&&br_motor.getCurrentPosition()<=target&&Math.abs(target-br_motor.getCurrentPosition())>=error){
-                br_motor.setPower(power*((target-br_motor.getCurrentPosition())/target));
+                br_motor.setPower(-power*((target-br_motor.getCurrentPosition())/target));
             }else if(checkbr&&br_motor.getCurrentPosition()<=target&&Math.abs(target-br_motor.getCurrentPosition())<=error){
                 checkbr=false;
                 br_motor.setPower(0);

@@ -74,7 +74,7 @@ public class StraightAuto extends LinearOpMode {
             y = 1;
         }
         if (direction == "down") {
-            y = -1
+            y = -1;
         }
         if (direction == "right") {
             x = 1;

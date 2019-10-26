@@ -110,9 +110,10 @@ public class Burhan_TeleOp extends OpMode {
         }
 
         if (dpad_mode) {
-            if (angle != target_angle) {
-                r = (target_angle - angle) / k;
-            }
+//            if (angle != target_angle) {
+//                r = (target_angle - angle) / k;
+//            }
+            r = -gamepad1.right_stick_x;
             if (up) {
                 y = 1;
                 x = 0;
@@ -120,10 +121,10 @@ public class Burhan_TeleOp extends OpMode {
                 y = -1;
                 x = 0;
             }else if (left) {
-                x = -1;
+                x = 1;
                 y = 0;
             }else if (right) {
-                x = 1;
+                x = -1;
                 y = 0;
             }else{
                 x = 0;
@@ -132,9 +133,9 @@ public class Burhan_TeleOp extends OpMode {
 
 
         } else {
-            x = gamepad1.left_stick_x;
+            x = -gamepad1.left_stick_x;
             y = -gamepad1.left_stick_y;
-            r = gamepad1.right_stick_x;
+            r = -gamepad1.right_stick_x;
 
             double scalar = Math.hypot(x, y);
             double theta;

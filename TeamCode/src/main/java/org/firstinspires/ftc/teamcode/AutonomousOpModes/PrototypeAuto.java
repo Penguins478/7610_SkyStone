@@ -103,28 +103,29 @@ public class PrototypeAuto extends LinearOpMode {           // hard code for now
         waitForStart();
 
         //while(opModeIsActive()) {   // go implement straight drive
-            encoderDrive(0.65, 24, 1000, 20);
-            stop();
-            //sleep(10000);
+        forward(0.65, 24, 1000, 20);
+        //right(0.6, 24, 1000, 25);
+        stop();
+        //sleep(10000);
         //}
 
 
     }
 
-    public void encoderDrive(double power, double distance, double timeOuts, double error){
+    public void forward(double power, double distance, double timeOuts, double error){
         double target = tl_motor.getCurrentPosition() + distance*COUNTS_PER_INCH*4;
         boolean checktl=true;
         boolean checktr=true;
         boolean checkbl=true;
         boolean checkbr=true;
-        while(tl_motor.getCurrentPosition()<=target&&Math.abs(target-tl_motor.getCurrentPosition())>=error &&
-                tr_motor.getCurrentPosition()<=target&&Math.abs(target-tr_motor.getCurrentPosition())>=error &&
-                bl_motor.getCurrentPosition()<=target&&Math.abs(target-bl_motor.getCurrentPosition())>=error &&
-                br_motor.getCurrentPosition()<=target&&Math.abs(target-br_motor.getCurrentPosition())>=error &&
+        while(tl_motor.getCurrentPosition() <= target && Math.abs(target-tl_motor.getCurrentPosition())>=error &&
+                tr_motor.getCurrentPosition() <= target && Math.abs(target-tr_motor.getCurrentPosition())>=error &&
+                bl_motor.getCurrentPosition() <= target && Math.abs(target-bl_motor.getCurrentPosition())>=error &&
+                br_motor.getCurrentPosition() <= target && Math.abs(target-br_motor.getCurrentPosition())>=error &&
                 checkbl&&checkbr&&checktl&&checktr){
 
             if(checktl&&tl_motor.getCurrentPosition()<=target&&Math.abs(target-tl_motor.getCurrentPosition())>=error){
-                tl_motor.setPower(-power*((target-tl_motor.getCurrentPosition())/target));
+                tl_motor.setPower(power*Math.abs((target-tl_motor.getCurrentPosition())/target));
             }else if(checktl&&tl_motor.getCurrentPosition()<=target&&Math.abs(target-tl_motor.getCurrentPosition())<=error){
                 checktl=false;
                 tl_motor.setPower(0);
@@ -142,8 +143,137 @@ public class PrototypeAuto extends LinearOpMode {           // hard code for now
                 bl_motor.setPower(0);
             }
             if(checkbr&&br_motor.getCurrentPosition()<=target&&Math.abs(target-br_motor.getCurrentPosition())>=error){
+                br_motor.setPower(power*((target-br_motor.getCurrentPosition())/target));
+            }else if(checkbr&&br_motor.getCurrentPosition()<=target&&Math.abs(target-br_motor.getCurrentPosition())<=error){
+                checkbr=false;
+                br_motor.setPower(0);
+
+            }
+
+
+        }
+        sleep((long)timeOuts);
+    }
+
+    public void backward(double power, double distance, double timeOuts, double error){
+        double target = tl_motor.getCurrentPosition() + distance*COUNTS_PER_INCH*4;
+        boolean checktl=true;
+        boolean checktr=true;
+        boolean checkbl=true;
+        boolean checkbr=true;
+        while(tl_motor.getCurrentPosition()<=target&&Math.abs(target-tl_motor.getCurrentPosition())>=error &&
+                tr_motor.getCurrentPosition()<=target&&Math.abs(target-tr_motor.getCurrentPosition())>=error &&
+                bl_motor.getCurrentPosition()<=target&&Math.abs(target-bl_motor.getCurrentPosition())>=error &&
+                br_motor.getCurrentPosition()<=target&&Math.abs(target-br_motor.getCurrentPosition())>=error &&
+                checkbl&&checkbr&&checktl&&checktr){
+
+            if(checktl&&tl_motor.getCurrentPosition()<=target&&Math.abs(target-tl_motor.getCurrentPosition())>=error){
+                tl_motor.setPower(-power*Math.abs((target-tl_motor.getCurrentPosition())/target));
+            }else if(checktl&&tl_motor.getCurrentPosition()<=target&&Math.abs(target-tl_motor.getCurrentPosition())<=error){
+                checktl=false;
+                tl_motor.setPower(0);
+            }
+            if(checktr&&tr_motor.getCurrentPosition()<=target&&Math.abs(target-tr_motor.getCurrentPosition())>=error){
+                tr_motor.setPower(-power*((target-tr_motor.getCurrentPosition())/target));
+            }else if(checktr&&tr_motor.getCurrentPosition()<=target&&Math.abs(target-tr_motor.getCurrentPosition())<=error){
+                checktr=false;
+                tr_motor.setPower(0);
+            }
+            if(checkbl&&bl_motor.getCurrentPosition()<=target&&Math.abs(target-bl_motor.getCurrentPosition())>=error){
+                bl_motor.setPower(-power*((target-bl_motor.getCurrentPosition())/target));
+            }else if(checkbl&&bl_motor.getCurrentPosition()<=target&&Math.abs(target-bl_motor.getCurrentPosition())<=error){
+                checkbl=false;
+                bl_motor.setPower(0);
+            }
+            if(checkbr&&br_motor.getCurrentPosition()<=target&&Math.abs(target-br_motor.getCurrentPosition())>=error){
                 br_motor.setPower(-power*((target-br_motor.getCurrentPosition())/target));
             }else if(checkbr&&br_motor.getCurrentPosition()<=target&&Math.abs(target-br_motor.getCurrentPosition())<=error){
+                checkbr=false;
+                br_motor.setPower(0);
+
+            }
+
+
+        }
+        sleep((long)timeOuts);
+    }
+
+    public void left(double power, double distance, double timeOuts, double error){
+        double target = tl_motor.getCurrentPosition() + distance*COUNTS_PER_INCH*4;
+        boolean checktl=true;
+        boolean checktr=true;
+        boolean checkbl=true;
+        boolean checkbr=true;
+        while(tl_motor.getCurrentPosition()<=target&&Math.abs(target-tl_motor.getCurrentPosition())>=error &&
+                tr_motor.getCurrentPosition()<=target&&Math.abs(target-tr_motor.getCurrentPosition())>=error &&
+                bl_motor.getCurrentPosition()<=target&&Math.abs(target-bl_motor.getCurrentPosition())>=error &&
+                br_motor.getCurrentPosition()<=target&&Math.abs(target-br_motor.getCurrentPosition())>=error &&
+                checkbl&&checkbr&&checktl&&checktr){
+
+            if(checktl&&tl_motor.getCurrentPosition()<=target&&Math.abs(target-tl_motor.getCurrentPosition())>=error){
+                tl_motor.setPower(-power*Math.abs((target-tl_motor.getCurrentPosition())/target));
+            }else if(checktl&&tl_motor.getCurrentPosition()<=target&&Math.abs(target-tl_motor.getCurrentPosition())<=error){
+                checktl=false;
+                tl_motor.setPower(0);
+            }
+            if(checktr&&tr_motor.getCurrentPosition()<=target&&Math.abs(target-tr_motor.getCurrentPosition())>=error){
+                tr_motor.setPower(power*Math.abs((target-tr_motor.getCurrentPosition())/target));
+            }else if(checktr&&tr_motor.getCurrentPosition()<=target&&Math.abs(target-tr_motor.getCurrentPosition())<=error){
+                checktr=false;
+                tr_motor.setPower(0);
+            }
+            if(checkbl&&bl_motor.getCurrentPosition()<=target&&Math.abs(target-bl_motor.getCurrentPosition())>=error){
+                bl_motor.setPower(power*Math.abs((target-bl_motor.getCurrentPosition())/target));
+            }else if(checkbl&&bl_motor.getCurrentPosition()<=target&&Math.abs(target-bl_motor.getCurrentPosition())<=error){
+                checkbl=false;
+                bl_motor.setPower(0);
+            }
+            if(checkbr&&br_motor.getCurrentPosition()<=target&&Math.abs(target-br_motor.getCurrentPosition())>=error){
+                br_motor.setPower(-power*Math.abs((target-br_motor.getCurrentPosition())/target));
+            }else if(checkbr&&br_motor.getCurrentPosition()<=target&&Math.abs(target-br_motor.getCurrentPosition())<=error){
+                checkbr=false;
+                br_motor.setPower(0);
+
+            }
+
+
+        }
+        sleep((long)timeOuts);
+    }
+
+    public void right(double power, double distance, double timeOuts, double error){
+        double target = tl_motor.getCurrentPosition() + distance*COUNTS_PER_INCH*4;
+        boolean checktl=true;
+        boolean checktr=true;
+        boolean checkbl=true;
+        boolean checkbr=true;
+        while(tl_motor.getCurrentPosition()>=-target&&Math.abs(target-tl_motor.getCurrentPosition())>=error &&
+                tr_motor.getCurrentPosition()<=target&&Math.abs(target-tr_motor.getCurrentPosition())>=error &&
+                bl_motor.getCurrentPosition()<=target&&Math.abs(target-bl_motor.getCurrentPosition())>=error &&
+                br_motor.getCurrentPosition()>=-target&&Math.abs(target-br_motor.getCurrentPosition())>=error &&
+                checkbl&&checkbr&&checktl&&checktr){
+
+            if(checktl&&tl_motor.getCurrentPosition()>=-target&&Math.abs(target-tl_motor.getCurrentPosition())>=error){
+                tl_motor.setPower(-power*Math.abs((target-tl_motor.getCurrentPosition()))/target);
+            }else if(checktl&&Math.abs(target-tl_motor.getCurrentPosition())<=error){
+                checktl=false;
+                tl_motor.setPower(0);
+            }
+            if(checktr&&tr_motor.getCurrentPosition()<=target&&Math.abs(target-tr_motor.getCurrentPosition())>=error){
+                tr_motor.setPower(power*Math.abs((target-tr_motor.getCurrentPosition()))/target);
+            }else if(checktr&&Math.abs(target-tr_motor.getCurrentPosition())<=error){
+                checktr=false;
+                tr_motor.setPower(0);
+            }
+            if(checkbl&&bl_motor.getCurrentPosition()<=target&&Math.abs(target-bl_motor.getCurrentPosition())>=error){
+                bl_motor.setPower(power*Math.abs((target-bl_motor.getCurrentPosition()))/target);
+            }else if(checkbl&&Math.abs(target-bl_motor.getCurrentPosition())<=error){
+                checkbl=false;
+                bl_motor.setPower(0);
+            }
+            if(checkbr&&br_motor.getCurrentPosition()>=-target&&Math.abs(target-br_motor.getCurrentPosition())>=error){
+                br_motor.setPower(-power*Math.abs((target-br_motor.getCurrentPosition()))/target);
+            }else if(checkbr&&Math.abs(target-br_motor.getCurrentPosition())<=error){
                 checkbr=false;
                 br_motor.setPower(0);
 

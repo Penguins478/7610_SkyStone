@@ -121,10 +121,10 @@ public class Burhan_TeleOp extends OpMode {
                 y = -1;
                 x = 0;
             }else if (left) {
-                x = 1;
+                x = -1;
                 y = 0;
             }else if (right) {
-                x = -1;
+                x = 1;
                 y = 0;
             }else{
                 x = 0;
@@ -134,7 +134,7 @@ public class Burhan_TeleOp extends OpMode {
 
         } else {
             x = -gamepad1.left_stick_x;
-            y = -gamepad1.left_stick_y;
+            y = gamepad1.left_stick_y;
             r = -gamepad1.right_stick_x;
 
             double scalar = Math.hypot(x, y);
@@ -148,10 +148,10 @@ public class Burhan_TeleOp extends OpMode {
             }
         }
 
-        tl_power = y - x + r;
-        tr_power = y + x - r;
-        bl_power = y + x + r;
-        br_power = y - x - r;
+        tl_power = y + x + r;
+        tr_power = y - x - r;
+        bl_power = y - x + r;
+        br_power = y + x - r;
 
         tl_power = Range.clip(tl_power, -1, 1);
         tr_power = Range.clip(tr_power, -1, 1);

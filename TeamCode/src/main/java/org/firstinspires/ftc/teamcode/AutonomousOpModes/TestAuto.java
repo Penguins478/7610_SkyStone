@@ -30,9 +30,10 @@ public class TestAuto extends LinearOpMode {           // hard code for now cuz 
     private double P_TURN_COEFF = 0.01;
     private double HEADING_THRESHOLD = 1;
 
+    private BNO055IMU.Parameters parameters;
     Orientation angles;
 
-    private static final double COUNTS_PER_MOTOR_REV = 288 * 2;
+    private static final double COUNTS_PER_MOTOR_REV = 288 * 4;
     private static final double GEAR_RATIO = 2;
     private static final double WHEEL_DIAMETER_INCHES = 2.9527559055; // or 3 based on what we get
     private static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV) / (WHEEL_DIAMETER_INCHES * Math.PI * GEAR_RATIO);
@@ -42,6 +43,10 @@ public class TestAuto extends LinearOpMode {           // hard code for now cuz 
     public void runOpMode(){
 
         imu = hardwareMap.get(BNO055IMU.class, "imu");
+
+        parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
+        imu.initialize(parameters);
 
         tl_motor = hardwareMap.dcMotor.get("tl_motor");
         tr_motor = hardwareMap.dcMotor.get("tr_motor");
@@ -70,47 +75,33 @@ public class TestAuto extends LinearOpMode {           // hard code for now cuz 
 
         waitForStart();
 
-        encoderDrive(48 * COUNTS_PER_INCH, 48 * COUNTS_PER_INCH, 48 * COUNTS_PER_INCH, 48 * COUNTS_PER_INCH, 0.65, 2, 100);
-        sleep(500);
-//        encoderDrive(24 * COUNTS_PER_INCH, 24 * COUNTS_PER_INCH, 24 * COUNTS_PER_INCH, 24 * COUNTS_PER_INCH, 0.3, 0.5, 100);
-//        sleep(500);
-
-        encoderDrive(-24 * COUNTS_PER_INCH, 24 * COUNTS_PER_INCH, 24 * COUNTS_PER_INCH, -24 * COUNTS_PER_INCH, 0.65, 2, 100);
-        sleep(500);
-
-        encoderDrive(-24 * COUNTS_PER_INCH, -24 * COUNTS_PER_INCH, -24 * COUNTS_PER_INCH, -24 * COUNTS_PER_INCH, 0.65, 2, 100);
-        sleep(500);
-
-        encoderDrive(0, -24 * COUNTS_PER_INCH * Math.sqrt(2), -24 * COUNTS_PER_INCH * Math.sqrt(2), 0, 0.85, 3, 100);
-        sleep(500);
-
-        //encoderDrive(24 * COUNTS_PER_INCH, -24 * COUNTS_PER_INCH, -24 * COUNTS_PER_INCH, 24 * COUNTS_PER_INCH, 0.3, 0.5, 100);
-        //sleep(500);
-
 
         while(opModeIsActive()){
 
             angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
-            telemetry.addData("Current angle: ", angles);
-            telemetry.addData("tl power", tl_motor.getPower());
-            telemetry.addData("tr power", tr_motor.getPower());
-            telemetry.addData("bl power", bl_motor.getPower());
-            telemetry.addData("br power", br_motor.getPower());
-            telemetry.addData("Encoder tl", tl_motor.getCurrentPosition());
-            telemetry.addData("Encoder tr", tr_motor.getCurrentPosition());
-            telemetry.addData("Encoder bl", bl_motor.getCurrentPosition());
-            telemetry.addData("Encoder br", br_motor.getCurrentPosition());
-            telemetry.update();
+            encoderDrive(48 * COUNTS_PER_INCH, 48 * COUNTS_PER_INCH, 48 * COUNTS_PER_INCH, 48 * COUNTS_PER_INCH, 0.65, 3, 100);
+            sleep(500);
+//        encoderDrive(24 * COUNTS_PER_INCH, 24 * COUNTS_PER_INCH, 24 * COUNTS_PER_INCH, 24 * COUNTS_PER_INCH, 0.3, 0.5, 100);
+//        sleep(500);
+
+            encoderDrive(-24 * COUNTS_PER_INCH, 24 * COUNTS_PER_INCH, 24 * COUNTS_PER_INCH, -24 * COUNTS_PER_INCH, 0.65, 3, 100);
+            sleep(500);
+
+            encoderDrive(-24 * COUNTS_PER_INCH, -24 * COUNTS_PER_INCH, -24 * COUNTS_PER_INCH, -24 * COUNTS_PER_INCH, 0.65, 3, 100);
+            sleep(500);
+
+            encoderDrive(0, -24 * COUNTS_PER_INCH * Math.sqrt(2), -24 * COUNTS_PER_INCH * Math.sqrt(2), 0, 0.85, 3, 100);
+            sleep(500);
+
+            //encoderDrive(24 * COUNTS_PER_INCH, -24 * COUNTS_PER_INCH, -24 * COUNTS_PER_INCH, 24 * COUNTS_PER_INCH, 0.3, 0.5, 100);
+            //sleep(500);
+            break;
         }
+        stop();
     }
 
     public void encoderDrive(double distance1, double distance2, double distance3, double distance4, double power, double error, long timeout){
-
-        distance1 *= 2;
-        distance2 *= 2;
-        distance3 *= 2;
-        distance4 *= 2;
 
         double start_tl = tl_motor.getCurrentPosition();
         double start_tr = tr_motor.getCurrentPosition();
@@ -124,44 +115,52 @@ public class TestAuto extends LinearOpMode {           // hard code for now cuz 
 
         while(!(there_tl && there_tr && there_bl && there_br)) {
             if(!there_tl) {
-                if (tl_motor.getCurrentPosition() + error < start_tl + distance1) {
+                if (tl_motor.getCurrentPosition() < (start_tl + distance1 - error) / 2) {
                     tl_motor.setPower(power);
+                } else if (tl_motor.getCurrentPosition() >= (start_tl + distance1 - error) / 2 && tl_motor.getCurrentPosition() < start_tl + distance1 - error) {
+                    tl_motor.setPower(power * 0.5);
                 } else if (tl_motor.getCurrentPosition() > start_tl + distance1 + error) {
                     //tl_motor.setPower(power * -0.5);
-                    tl_motor.setPower(-power);
+                    tl_motor.setPower(-power * 0.5);
                 } else {
                     there_tl = true;
                     tl_motor.setPower(0);
                 }
             }
             if(!there_tr) {
-                if (tr_motor.getCurrentPosition() + error < start_tr + distance2) {
+                if (tr_motor.getCurrentPosition() < (start_tr + distance2 - error) / 2) {
                     tr_motor.setPower(power);
+                } else if (tr_motor.getCurrentPosition() >= (start_tr + distance2 - error) / 2 && tr_motor.getCurrentPosition() < start_tr + distance2 - error) {
+                    tr_motor.setPower(power * 0.5);
                 } else if (tr_motor.getCurrentPosition() > start_tr + distance2 + error) {
                     //tr_motor.setPower(power * -0.5);
-                    tr_motor.setPower(-power);
+                    tr_motor.setPower(-power * 0.5);
                 } else {
                     there_tr = true;
                     tr_motor.setPower(0);
                 }
             }
             if(!there_bl) {
-                if (bl_motor.getCurrentPosition() + error < start_bl + distance3) {
+                if (bl_motor.getCurrentPosition() < (start_bl + distance3 - error) / 2) {
                     bl_motor.setPower(power);
+                } else if (bl_motor.getCurrentPosition() >= (start_bl + distance3 - error) / 2 && bl_motor.getCurrentPosition() < start_bl + distance3 - error) {
+                    bl_motor.setPower(power * 0.5);
                 } else if (bl_motor.getCurrentPosition() > start_bl + distance3 + error) {
                     //bl_motor.setPower(power * -0.5);
-                    bl_motor.setPower(-power);
+                    bl_motor.setPower(-power * 0.5);
                 } else {
                     there_bl = true;
                     bl_motor.setPower(0);
                 }
             }
             if(!there_br) {
-                if (br_motor.getCurrentPosition() + error < start_br + distance4) {
+                if (br_motor.getCurrentPosition() < (start_br + distance4 - error) / 2) {
                     br_motor.setPower(power);
+                } else if (br_motor.getCurrentPosition() >= (start_br + distance4 - error) / 2 && br_motor.getCurrentPosition() < start_br + distance4 - error) {
+                    br_motor.setPower(power * 0.5);
                 } else if (br_motor.getCurrentPosition() > start_br + distance4 + error) {
                     //br_motor.setPower(power * -0.5);
-                    br_motor.setPower(-power);
+                    br_motor.setPower(-power * 0.5);
                 } else {
                     there_br = true;
                     br_motor.setPower(0);

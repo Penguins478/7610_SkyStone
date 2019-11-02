@@ -1,7 +1,6 @@
-package org.firstinspires.ftc.teamcode.FirstYearTeleOps;
+package org.firstinspires.ftc.teamcode.TeleOpModes;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -14,7 +13,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 @TeleOp(name = "Burhan_TeleOp", group = "Iterative OpMode")
-//@Disabled
 public class Burhan_TeleOp extends OpMode {
     // declares all of the variables, like motors, and power
     private DcMotor tl_motor;
@@ -110,23 +108,20 @@ public class Burhan_TeleOp extends OpMode {
         }
 
         if (dpad_mode) {
-//            if (angle != target_angle) {
-//                r = (target_angle - angle) / k;
-//            }
             r = -gamepad1.right_stick_x;
             if (up) {
                 y = 1;
                 x = 0;
-            }else if (down) {
+            } else if (down) {
                 y = -1;
                 x = 0;
-            }else if (left) {
+            } else if (left) {
                 x = -1;
                 y = 0;
-            }else if (right) {
+            } else if (right) {
                 x = 1;
                 y = 0;
-            }else{
+            } else {
                 x = 0;
                 y = 0;
             }

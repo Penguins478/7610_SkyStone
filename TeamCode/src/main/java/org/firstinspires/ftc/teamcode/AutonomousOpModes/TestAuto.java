@@ -3,23 +3,37 @@ package org.firstinspires.ftc.teamcode.AutonomousOpModes;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
+import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
+import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGREES;
+import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.XYZ;
+import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.YZX;
+import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.EXTRINSIC;
+import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection.BACK;
+
 @Autonomous(name = "TestAuto", group = "Autonomous")
-//@Disabled
 public class TestAuto extends LinearOpMode {           // hard code for now cuz we arent doing anything
-    // and roadrunner + odometry will take awhile
     private DcMotor tl_motor;
     private DcMotor tr_motor;
     private DcMotor bl_motor;
@@ -38,9 +52,21 @@ public class TestAuto extends LinearOpMode {           // hard code for now cuz 
     private static final double WHEEL_DIAMETER_INCHES = 2.9527559055; // or 3 based on what we get
     private static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV) / (WHEEL_DIAMETER_INCHES * Math.PI * GEAR_RATIO);
 
+    private static final VuforiaLocalizer.CameraDirection CAMERA_CHOICE = BACK;
+    private static final boolean PHONE_IS_PORTRAIT = false;
+
+    private static final String VUFORIA_KEY =
+            " AbBJWbv/////AAABmVD+Kn/RREico/taojg6bfsKOtum5LJz26FaanI9FmsViq9h3H32Cdrvha/AEzmlNBaQoOc5vu047HjDtjOSkV6b6W4sQ/YupBfJOCKaVpy1OYJPHdcMEucd20jEvRCT+3ECY2oEpgTXsU1DJMd47eehl/ueiA+V/EdvC2MuVBdyb+B0CLlSGjfGt63iAT9Orm4j42bCM1tmtsZGtJO/bWqLax8iMRctVK7I0mZpQ2B6/v+EV3mPN8si+ezfh3gtwyjBTQWUhYDMy4yXyDjoBhlPVzTnThJ6OpXH3EqQv0ODVLiizoX0ddq9QU2hQINKTJI1M0VWfRlvpxe9q+F0oAwP7f6GQOKC5MhsCquUpvqM ";
+
+    private VuforiaLocalizer vuforia = null;
+    private boolean targetVisible = false;
+    private float phoneXRotate = 0;
+    private float phoneYRotate = 0;
+    private float phoneZRotate = 0;
+
     private ElapsedTime runtime = new ElapsedTime();
 
-    public void runOpMode(){
+    public void runOpMode() {
 
         imu = hardwareMap.get(BNO055IMU.class, "imu");
 
@@ -63,45 +89,81 @@ public class TestAuto extends LinearOpMode {           // hard code for now cuz 
         tr_motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         br_motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        tl_motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        tr_motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        bl_motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        br_motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
         tl_motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         tr_motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         bl_motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         br_motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
+
+        parameters.vuforiaLicenseKey = VUFORIA_KEY;
+        parameters.cameraDirection = CAMERA_CHOICE;
+
+        vuforia = ClassFactory.getInstance().createVuforia(parameters);
+
+        VuforiaTrackables targetsSkyStone = this.vuforia.loadTrackablesFromAsset("Skystone");
+
+        VuforiaTrackable stoneTarget = targetsSkyStone.get(0);
+        stoneTarget.setName("Stone Target");
+
+        if (CAMERA_CHOICE == BACK) {
+            phoneYRotate = -90;
+        } else {
+            phoneYRotate = 90;
+        }
+
+        if (PHONE_IS_PORTRAIT) {
+            phoneXRotate = 90;
+        }
+
         waitForStart();
 
+        targetsSkyStone.activate();
 
-        while(opModeIsActive()){
+        while (opModeIsActive()) {
 
             angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
-            encoderDrive(48 * COUNTS_PER_INCH, 48 * COUNTS_PER_INCH, 48 * COUNTS_PER_INCH, 48 * COUNTS_PER_INCH, 0.65, 3, 100);
-            sleep(500);
-//        encoderDrive(24 * COUNTS_PER_INCH, 24 * COUNTS_PER_INCH, 24 * COUNTS_PER_INCH, 24 * COUNTS_PER_INCH, 0.3, 0.5, 100);
-//        sleep(500);
+//            encoderDrive(48 * COUNTS_PER_INCH, 48 * COUNTS_PER_INCH, 48 * COUNTS_PER_INCH, 48 * COUNTS_PER_INCH, 0.65, 20, 100);
+//            sleep(500);
+////          encoderDrive(24 * COUNTS_PER_INCH, 24 * COUNTS_PER_INCH, 24 * COUNTS_PER_INCH, 24 * COUNTS_PER_INCH, 0.3, 0.5, 100);
+////          sleep(500);
+//
+//            encoderDrive(-24 * COUNTS_PER_INCH, 24 * COUNTS_PER_INCH, 24 * COUNTS_PER_INCH, -24 * COUNTS_PER_INCH, 0.65, 20, 100);
+//            sleep(500);
+//
+//            encoderDrive(-24 * COUNTS_PER_INCH, -24 * COUNTS_PER_INCH, -24 * COUNTS_PER_INCH, -24 * COUNTS_PER_INCH, 0.65, 20, 100);
+//            sleep(500);
+//
+//            encoderDrive(0, -24 * COUNTS_PER_INCH * Math.sqrt(2), -24 * COUNTS_PER_INCH * Math.sqrt(2), 0, 0.85, 20, 100);
+//            sleep(500);
 
-            encoderDrive(-24 * COUNTS_PER_INCH, 24 * COUNTS_PER_INCH, 24 * COUNTS_PER_INCH, -24 * COUNTS_PER_INCH, 0.65, 3, 100);
-            sleep(500);
+            encoderDrive2(48, 'y', 1, 20, 500);
+            encoderDrive2(-24, 'x', 1, 20, 500);
+            encoderDrive2(-48, 'y', 1, 20, 500);
+            encoderDrive2(24, 'x', 1, 20, 500);
 
-            encoderDrive(-24 * COUNTS_PER_INCH, -24 * COUNTS_PER_INCH, -24 * COUNTS_PER_INCH, -24 * COUNTS_PER_INCH, 0.65, 3, 100);
-            sleep(500);
-
-            encoderDrive(0, -24 * COUNTS_PER_INCH * Math.sqrt(2), -24 * COUNTS_PER_INCH * Math.sqrt(2), 0, 0.85, 3, 100);
-            sleep(500);
 
             //encoderDrive(24 * COUNTS_PER_INCH, -24 * COUNTS_PER_INCH, -24 * COUNTS_PER_INCH, 24 * COUNTS_PER_INCH, 0.3, 0.5, 100);
             //sleep(500);
+
+            targetVisible = false;
+            if (((VuforiaTrackableDefaultListener) stoneTarget.getListener()).isVisible()) {
+                telemetry.addData("Visible Target", stoneTarget.getName());
+                targetVisible = true;
+            }
+
+            telemetry.update();
+
             break;
         }
+
+        targetsSkyStone.deactivate();
         stop();
     }
 
-    public void encoderDrive(double distance1, double distance2, double distance3, double distance4, double power, double error, long timeout){
+    public void encoderDrive(double distance1, double distance2, double distance3, double distance4, double power, double error, long timeout) {
 
         double start_tl = tl_motor.getCurrentPosition();
         double start_tr = tr_motor.getCurrentPosition();
@@ -113,8 +175,8 @@ public class TestAuto extends LinearOpMode {           // hard code for now cuz 
         boolean there_bl = false;
         boolean there_br = false;
 
-        while(!(there_tl && there_tr && there_bl && there_br)) {
-            if(!there_tl) {
+        while (!(there_tl && there_tr && there_bl && there_br)) {
+            if (!there_tl) {
                 if (tl_motor.getCurrentPosition() < (start_tl + distance1 - error) / 2) {
                     tl_motor.setPower(power);
                 } else if (tl_motor.getCurrentPosition() >= (start_tl + distance1 - error) / 2 && tl_motor.getCurrentPosition() < start_tl + distance1 - error) {
@@ -127,7 +189,7 @@ public class TestAuto extends LinearOpMode {           // hard code for now cuz 
                     tl_motor.setPower(0);
                 }
             }
-            if(!there_tr) {
+            if (!there_tr) {
                 if (tr_motor.getCurrentPosition() < (start_tr + distance2 - error) / 2) {
                     tr_motor.setPower(power);
                 } else if (tr_motor.getCurrentPosition() >= (start_tr + distance2 - error) / 2 && tr_motor.getCurrentPosition() < start_tr + distance2 - error) {
@@ -140,7 +202,7 @@ public class TestAuto extends LinearOpMode {           // hard code for now cuz 
                     tr_motor.setPower(0);
                 }
             }
-            if(!there_bl) {
+            if (!there_bl) {
                 if (bl_motor.getCurrentPosition() < (start_bl + distance3 - error) / 2) {
                     bl_motor.setPower(power);
                 } else if (bl_motor.getCurrentPosition() >= (start_bl + distance3 - error) / 2 && bl_motor.getCurrentPosition() < start_bl + distance3 - error) {
@@ -153,7 +215,7 @@ public class TestAuto extends LinearOpMode {           // hard code for now cuz 
                     bl_motor.setPower(0);
                 }
             }
-            if(!there_br) {
+            if (!there_br) {
                 if (br_motor.getCurrentPosition() < (start_br + distance4 - error) / 2) {
                     br_motor.setPower(power);
                 } else if (br_motor.getCurrentPosition() >= (start_br + distance4 - error) / 2 && br_motor.getCurrentPosition() < start_br + distance4 - error) {
@@ -185,6 +247,66 @@ public class TestAuto extends LinearOpMode {           // hard code for now cuz 
         sleep(timeout);
 
     }
+
+    public void encoderDrive2(double inches, char direction, double power, double error, long timeout) {
+        double dist = inches * COUNTS_PER_INCH;
+
+        double tl_dist;
+        double tr_dist;
+        double bl_dist;
+        double br_dist;
+
+        boolean there_tl = false;
+        boolean there_tr = false;
+        boolean there_bl = false;
+        boolean there_br = false;
+
+        double start_tl = tl_motor.getCurrentPosition();
+        double start_tr = tr_motor.getCurrentPosition();
+        double start_bl = bl_motor.getCurrentPosition();
+        double start_br = br_motor.getCurrentPosition();
+
+        if (direction == 'y') {
+            tl_dist = dist;
+            tr_dist = dist;
+            bl_dist = dist;
+            br_dist = dist;
+        } else if (direction == 'x') {
+            tl_dist = dist;
+            tr_dist = -dist;
+            bl_dist = -dist;
+            br_dist = dist;
+        } else {
+            tl_dist = 0;
+            tr_dist = 0;
+            bl_dist = 0;
+            br_dist = 0;
+        }
+
+        while (!(there_tl && there_tr && there_bl && there_br)){
+            there_tl = adjust_motor(tl_motor, tl_dist, start_tl, power, error);
+            there_tr = adjust_motor(tr_motor, tr_dist, start_tr, power, error);
+            there_bl = adjust_motor(bl_motor, bl_dist, start_bl, power, error);
+            there_br = adjust_motor(br_motor, br_dist, start_br, power, error);
+        }
+
+        sleep(timeout);
+    }
+
+    public boolean adjust_motor(DcMotor motor, double distance, double start, double power, double error) {
+        if (motor.getCurrentPosition() < start + distance - error) {
+            motor.setPower(power);
+            return false;
+        } else if (motor.getCurrentPosition() > start + distance + error) {
+            motor.setPower(-power);
+            return false;
+        } else {
+            motor.setPower(0);
+            return true;
+        }
+    }
+
+
 //
 //    public void gyroTurn (  double speed, double angle) {
 //

@@ -52,18 +52,6 @@ public class TestAuto extends LinearOpMode {           // hard code for now cuz 
     private static final double WHEEL_DIAMETER_INCHES = 2.9527559055; // or 3 based on what we get
     private static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV) / (WHEEL_DIAMETER_INCHES * Math.PI * GEAR_RATIO);
 
-    private static final VuforiaLocalizer.CameraDirection CAMERA_CHOICE = BACK;
-    private static final boolean PHONE_IS_PORTRAIT = false;
-
-    private static final String VUFORIA_KEY =
-            " AbBJWbv/////AAABmVD+Kn/RREico/taojg6bfsKOtum5LJz26FaanI9FmsViq9h3H32Cdrvha/AEzmlNBaQoOc5vu047HjDtjOSkV6b6W4sQ/YupBfJOCKaVpy1OYJPHdcMEucd20jEvRCT+3ECY2oEpgTXsU1DJMd47eehl/ueiA+V/EdvC2MuVBdyb+B0CLlSGjfGt63iAT9Orm4j42bCM1tmtsZGtJO/bWqLax8iMRctVK7I0mZpQ2B6/v+EV3mPN8si+ezfh3gtwyjBTQWUhYDMy4yXyDjoBhlPVzTnThJ6OpXH3EqQv0ODVLiizoX0ddq9QU2hQINKTJI1M0VWfRlvpxe9q+F0oAwP7f6GQOKC5MhsCquUpvqM ";
-
-    private VuforiaLocalizer vuforia = null;
-    private boolean targetVisible = false;
-    private float phoneXRotate = 0;
-    private float phoneYRotate = 0;
-    private float phoneZRotate = 0;
-
     private ElapsedTime runtime = new ElapsedTime();
 
     public void runOpMode() {
@@ -94,32 +82,7 @@ public class TestAuto extends LinearOpMode {           // hard code for now cuz 
         bl_motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         br_motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
-
-        parameters.vuforiaLicenseKey = VUFORIA_KEY;
-        parameters.cameraDirection = CAMERA_CHOICE;
-
-        vuforia = ClassFactory.getInstance().createVuforia(parameters);
-
-        VuforiaTrackables targetsSkyStone = this.vuforia.loadTrackablesFromAsset("Skystone");
-
-        VuforiaTrackable stoneTarget = targetsSkyStone.get(0);
-        stoneTarget.setName("Stone Target");
-
-        if (CAMERA_CHOICE == BACK) {
-            phoneYRotate = -90;
-        } else {
-            phoneYRotate = 90;
-        }
-
-        if (PHONE_IS_PORTRAIT) {
-            phoneXRotate = 90;
-        }
-
         waitForStart();
-
-        targetsSkyStone.activate();
 
         while (opModeIsActive()) {
 
@@ -144,22 +107,14 @@ public class TestAuto extends LinearOpMode {           // hard code for now cuz 
             encoderDrive2(-48, 'y', 1, 20, 500);
             encoderDrive2(24, 'x', 1, 20, 500);
 
-
             //encoderDrive(24 * COUNTS_PER_INCH, -24 * COUNTS_PER_INCH, -24 * COUNTS_PER_INCH, 24 * COUNTS_PER_INCH, 0.3, 0.5, 100);
             //sleep(500);
-
-            targetVisible = false;
-            if (((VuforiaTrackableDefaultListener) stoneTarget.getListener()).isVisible()) {
-                telemetry.addData("Visible Target", stoneTarget.getName());
-                targetVisible = true;
-            }
 
             telemetry.update();
 
             break;
         }
 
-        targetsSkyStone.deactivate();
         stop();
     }
 
@@ -251,10 +206,10 @@ public class TestAuto extends LinearOpMode {           // hard code for now cuz 
     public void encoderDrive2(double inches, char direction, double power, double error, long timeout) {
         double dist = inches * COUNTS_PER_INCH;
 
-        double tl_dist;
-        double tr_dist;
-        double bl_dist;
-        double br_dist;
+        double tl_dist = 0;
+        double tr_dist = 0;
+        double bl_dist = 0;
+        double br_dist = 0;
 
         boolean there_tl = false;
         boolean there_tr = false;
@@ -276,11 +231,6 @@ public class TestAuto extends LinearOpMode {           // hard code for now cuz 
             tr_dist = -dist;
             bl_dist = -dist;
             br_dist = dist;
-        } else {
-            tl_dist = 0;
-            tr_dist = 0;
-            bl_dist = 0;
-            br_dist = 0;
         }
 
         while (!(there_tl && there_tr && there_bl && there_br)){
@@ -308,7 +258,7 @@ public class TestAuto extends LinearOpMode {           // hard code for now cuz 
 
 
 //
-//    public void gyroTurn (  double speed, double angle) {
+//    public void gyroTurn ( double speed, double angle) {
 //
 //        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 //

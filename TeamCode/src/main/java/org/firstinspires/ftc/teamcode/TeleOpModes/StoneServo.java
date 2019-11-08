@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class StoneServo extends LinearOpMode {
 
 
-    private static final double MAXIMUM = 0.15; //change
+    private static final double MAXIMUM = 1; //change
     private static final double MINIMUM = 0; //change
 
     private Servo servo;
@@ -34,7 +34,7 @@ public class StoneServo extends LinearOpMode {
             idle();
 
         }
-
+        stop();
     }
 
 }

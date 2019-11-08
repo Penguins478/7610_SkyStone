@@ -87,12 +87,11 @@ public class TestAuto2 extends LinearOpMode {           // hard code for now cuz
             encoderDrive(-24 * COUNTS_PER_INCH, 24 * COUNTS_PER_INCH, 24 * COUNTS_PER_INCH, -24 * COUNTS_PER_INCH, 0.65, 10, 150);
             sleep(500);
 
-            encoderDrive(-24 * COUNTS_PER_INCH, -24 * COUNTS_PER_INCH, -24 * COUNTS_PER_INCH, -24 * COUNTS_PER_INCH, 0.65, 2, 100);
+            encoderDrive(-48 * COUNTS_PER_INCH, -48 * COUNTS_PER_INCH, -48 * COUNTS_PER_INCH, -48 * COUNTS_PER_INCH, 0.55, 5, 100);
             sleep(500);
 
-            encoderDrive(0, -24 * COUNTS_PER_INCH * Math.sqrt(2), -24 * COUNTS_PER_INCH * Math.sqrt(2), 0, 0.85, 10, 100);
+            encoderDrive(24 * COUNTS_PER_INCH, -24 * COUNTS_PER_INCH, -24 * COUNTS_PER_INCH, 24 * COUNTS_PER_INCH, 0.65, 10, 150);
             sleep(500);
-
             //encoderDrive(24 * COUNTS_PER_INCH, -24 * COUNTS_PER_INCH, -24 * COUNTS_PER_INCH, 24 * COUNTS_PER_INCH, 0.3, 0.5, 100);
             //sleep(500);
             break;

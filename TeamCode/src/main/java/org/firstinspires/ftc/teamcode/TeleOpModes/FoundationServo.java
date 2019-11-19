@@ -24,8 +24,8 @@ public class FoundationServo extends OpMode {
     public void loop() {
         boolean pressed = gamepad1.right_bumper;
         if (pressed) {
-            servol.setPosition(0.5);
-            servor.setPosition(0.5);
+            servol.setPosition(1.0);
+            servor.setPosition(1.0);
         } else {
             servol.setPosition(0.0);
             servor.setPosition(0.0);

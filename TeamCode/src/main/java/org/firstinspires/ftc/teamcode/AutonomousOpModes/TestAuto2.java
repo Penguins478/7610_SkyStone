@@ -1,4 +1,3 @@
-
 package org.firstinspires.ftc.teamcode.AutonomousOpModes;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
@@ -16,9 +15,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
-@Autonomous(name = "TestAuto", group = "Autonomous")
+@Autonomous(name = "TestAuto2", group = "Autonomous")
 //@Disabled
-public class TestAuto extends LinearOpMode {           // hard code for now cuz we arent doing anything
+public class TestAuto2 extends LinearOpMode {           // hard code for now cuz we arent doing anything
     // and roadrunner + odometry will take awhile
     private DcMotor tl_motor;
     private DcMotor tr_motor;
@@ -80,20 +79,19 @@ public class TestAuto extends LinearOpMode {           // hard code for now cuz 
 
             angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
-            encoderDrive(48 * COUNTS_PER_INCH, 48 * COUNTS_PER_INCH, 48 * COUNTS_PER_INCH, 48 * COUNTS_PER_INCH, 0.65, 3, 100);
+            encoderDrive(48 * COUNTS_PER_INCH, 48 * COUNTS_PER_INCH, 48 * COUNTS_PER_INCH, 48 * COUNTS_PER_INCH, 0.65, 10, 100);
             sleep(500);
 //        encoderDrive(24 * COUNTS_PER_INCH, 24 * COUNTS_PER_INCH, 24 * COUNTS_PER_INCH, 24 * COUNTS_PER_INCH, 0.3, 0.5, 100);
 //        sleep(500);
 
-            encoderDrive(-24 * COUNTS_PER_INCH, 24 * COUNTS_PER_INCH, 24 * COUNTS_PER_INCH, -24 * COUNTS_PER_INCH, 0.65, 3, 100);
+            encoderDrive(-24 * COUNTS_PER_INCH, 24 * COUNTS_PER_INCH, 24 * COUNTS_PER_INCH, -24 * COUNTS_PER_INCH, 0.65, 10, 150);
             sleep(500);
 
-            encoderDrive(-24 * COUNTS_PER_INCH, -24 * COUNTS_PER_INCH, -24 * COUNTS_PER_INCH, -24 * COUNTS_PER_INCH, 0.65, 3, 100);
+            encoderDrive(-48 * COUNTS_PER_INCH, -48 * COUNTS_PER_INCH, -48 * COUNTS_PER_INCH, -48 * COUNTS_PER_INCH, 0.55, 5, 100);
             sleep(500);
 
-            encoderDrive(0, -24 * COUNTS_PER_INCH * Math.sqrt(2), -24 * COUNTS_PER_INCH * Math.sqrt(2), 0, 0.85, 3, 100);
+            encoderDrive(24 * COUNTS_PER_INCH, -24 * COUNTS_PER_INCH, -24 * COUNTS_PER_INCH, 24 * COUNTS_PER_INCH, 0.65, 10, 150);
             sleep(500);
-
             //encoderDrive(24 * COUNTS_PER_INCH, -24 * COUNTS_PER_INCH, -24 * COUNTS_PER_INCH, 24 * COUNTS_PER_INCH, 0.3, 0.5, 100);
             //sleep(500);
             break;
@@ -118,10 +116,10 @@ public class TestAuto extends LinearOpMode {           // hard code for now cuz 
                 if (tl_motor.getCurrentPosition() < (start_tl + distance1 - error) / 2) {
                     tl_motor.setPower(power);
                 } else if (tl_motor.getCurrentPosition() >= (start_tl + distance1 - error) / 2 && tl_motor.getCurrentPosition() < start_tl + distance1 - error) {
-                    tl_motor.setPower(power * 0.5);
+                    tl_motor.setPower(power * 0.65);
                 } else if (tl_motor.getCurrentPosition() > start_tl + distance1 + error) {
                     //tl_motor.setPower(power * -0.5);
-                    tl_motor.setPower(-power * 0.5);
+                    tl_motor.setPower(-power);
                 } else {
                     there_tl = true;
                     tl_motor.setPower(0);
@@ -131,10 +129,10 @@ public class TestAuto extends LinearOpMode {           // hard code for now cuz 
                 if (tr_motor.getCurrentPosition() < (start_tr + distance2 - error) / 2) {
                     tr_motor.setPower(power);
                 } else if (tr_motor.getCurrentPosition() >= (start_tr + distance2 - error) / 2 && tr_motor.getCurrentPosition() < start_tr + distance2 - error) {
-                    tr_motor.setPower(power * 0.5);
+                    tr_motor.setPower(power * 0.65);
                 } else if (tr_motor.getCurrentPosition() > start_tr + distance2 + error) {
                     //tr_motor.setPower(power * -0.5);
-                    tr_motor.setPower(-power * 0.5);
+                    tr_motor.setPower(-power);
                 } else {
                     there_tr = true;
                     tr_motor.setPower(0);
@@ -144,10 +142,10 @@ public class TestAuto extends LinearOpMode {           // hard code for now cuz 
                 if (bl_motor.getCurrentPosition() < (start_bl + distance3 - error) / 2) {
                     bl_motor.setPower(power);
                 } else if (bl_motor.getCurrentPosition() >= (start_bl + distance3 - error) / 2 && bl_motor.getCurrentPosition() < start_bl + distance3 - error) {
-                    bl_motor.setPower(power * 0.5);
+                    bl_motor.setPower(power * 0.65);
                 } else if (bl_motor.getCurrentPosition() > start_bl + distance3 + error) {
                     //bl_motor.setPower(power * -0.5);
-                    bl_motor.setPower(-power * 0.5);
+                    bl_motor.setPower(-power);
                 } else {
                     there_bl = true;
                     bl_motor.setPower(0);
@@ -157,10 +155,10 @@ public class TestAuto extends LinearOpMode {           // hard code for now cuz 
                 if (br_motor.getCurrentPosition() < (start_br + distance4 - error) / 2) {
                     br_motor.setPower(power);
                 } else if (br_motor.getCurrentPosition() >= (start_br + distance4 - error) / 2 && br_motor.getCurrentPosition() < start_br + distance4 - error) {
-                    br_motor.setPower(power * 0.5);
+                    br_motor.setPower(power * 0.65);
                 } else if (br_motor.getCurrentPosition() > start_br + distance4 + error) {
                     //br_motor.setPower(power * -0.5);
-                    br_motor.setPower(-power * 0.5);
+                    br_motor.setPower(-power);
                 } else {
                     there_br = true;
                     br_motor.setPower(0);
@@ -261,3 +259,4 @@ public class TestAuto extends LinearOpMode {           // hard code for now cuz 
 //        }
 //    }
 }
+

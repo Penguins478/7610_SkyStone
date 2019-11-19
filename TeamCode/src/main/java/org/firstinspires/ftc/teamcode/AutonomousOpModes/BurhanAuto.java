@@ -109,7 +109,7 @@ public class BurhanAuto extends LinearOpMode {
             there_br = adjust_motor(br_motor, br_dist, start_br, power, error);
 
             while (Math.abs(angle) > ANGLE_ERROR) {
-                double adjustment = Math.abs(angle - ANGLE_ERROR) / 45;
+                double adjustment = (Math.abs(angle) - ANGLE_ERROR) / 45;
                 if (adjustment < 0.1) {
                     adjustment = 0.1;
                 }

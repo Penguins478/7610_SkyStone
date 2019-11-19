@@ -25,7 +25,7 @@ public class BurhanAuto extends LinearOpMode {
     private static final double GEAR_RATIO = 2;
     private static final double WHEEL_DIAMETER_INCHES = 2.9527559055; // or 3 based on what we get
     private static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV) / (WHEEL_DIAMETER_INCHES * Math.PI * GEAR_RATIO);
-    private static final double ANGLE_ERROR = 15;
+    private static final double ANGLE_ERROR = 5;
 
     public void runOpMode() {
 
@@ -109,16 +109,20 @@ public class BurhanAuto extends LinearOpMode {
             there_br = adjust_motor(br_motor, br_dist, start_br, power, error);
 
             while (Math.abs(angle) > ANGLE_ERROR) {
+                double adjustment = Math.abs(angle - ANGLE_ERROR) / 45;
+                if (adjustment < 0.1) {
+                    adjustment = 0.1;
+                }
                 if (angle > 0) {
-                    tl_motor.setPower(power);
-                    tr_motor.setPower(-power);
-                    bl_motor.setPower(power);
-                    br_motor.setPower(-power);
+                    tl_motor.setPower(adjustment);
+                    tr_motor.setPower(-adjustment);
+                    bl_motor.setPower(adjustment);
+                    br_motor.setPower(-adjustment);
                 } else {
-                    tl_motor.setPower(-power);
-                    tr_motor.setPower(power);
-                    bl_motor.setPower(-power);
-                    br_motor.setPower(power);
+                    tl_motor.setPower(-adjustment);
+                    tr_motor.setPower(adjustment);
+                    bl_motor.setPower(-adjustment);
+                    br_motor.setPower(adjustment);
                 }
                 angle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
 
@@ -144,6 +148,9 @@ public class BurhanAuto extends LinearOpMode {
 
     private boolean adjust_motor(DcMotor motor, double distance, double start, double power, double error) {
         double coeff = (start + distance - motor.getCurrentPosition()) / distance;
+        if (coeff < 0.25) {
+            coeff = 0.25;
+        }
         if (motor.getCurrentPosition() < start + distance - error) {
             motor.setPower(coeff * power);
             return false;
